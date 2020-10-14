@@ -4,3 +4,6 @@
 [submodule "RDM"]
 	path = RDM
 	url = https://github.com/ETCLabs/RDM.git
+[submodule "EtcPal"]
+	path = EtcPal
+	url = https://github.com/ETCLabs/EtcPal.git

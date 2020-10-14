@@ -1,11 +1,43 @@
 // RDMTest.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
+#ifdef _WIN32
+#include <Windows.h>
+#else
+#include <unistd.h>
+#endif
 #include <iostream>
+#include "GadgetDLL.h"
+#include "etcpal/timer.h"
+#include "RDMTestClass.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    
+    int success = 0, timeout = 0;
+   EtcPalTimer timer;
+    std::cout << "RDMTest\n";
+    Gadget2_Connect();
+    etcpal_timer_start(&timer, 1000);
+    do {
+        success = Gadget2_GetNumGadgetDevices();
+        timeout = etcpal_timer_is_expired(&timer);
+    } while (!success && !timeout);
+    if (timeout)
+        std::cout << "could not find any connected Gadget II devices";
+    else
+    {
+        Gadget2_DoFullDiscovery(0, 1);
+        Sleep(1000);
+        if (Gadget2_GetDiscoveredDevices() >= 1)
+        {
+           // RDMTestClass RDMTestObj;
+            RdmDeviceInfo* DeviceInfo = Gadget2_GetDeviceInfo(0);
+           // RDMTestObj.TestAllPIDS(DeviceInfo->manufacturer_id, DeviceInfo->device_id);
+        }
+        
+        
+    }
+        
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

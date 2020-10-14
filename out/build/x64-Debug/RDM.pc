@@ -1,0 +1,12 @@
+prefix=C:/Users/janderson/source/repos/RDMTest/out/install/x64-Debug
+exec_prefix=${prefix}
+includedir=${prefix}/include
+libdir=${exec_prefix}/lib
+
+Name: RDM
+Description: Implementation of the RDM protocol
+Version: 0.3.0
+URL: https://github.com/ETCLabs/RDM
+Requires: EtcPal >= 0.3
+Cflags: -I${includedir}
+Libs: -L${libdir} -lRDM
