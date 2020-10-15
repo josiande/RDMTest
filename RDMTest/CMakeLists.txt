@@ -3,13 +3,6 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-
-# add_library(RDMTestClass_lib STATIC RDMTestClass.cpp RDMTestClass.h)
-# target_include_directories(RDMTestClass_lib PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-# Add source to this project's executable.
-add_executable (RDMTest "RDMTest.cpp" "RDMTest.h" "RDMTestClass.cpp" "RDMTestClass.h")
-
 if(CMAKE_SIZEOF_VOID_P STREQUAL 4)
   list(APPEND CMAKE_PREFIX_PATH ${CMAKE_SOURCE_DIR}/libGadget/Win32)
 else()
@@ -18,10 +11,14 @@ endif()
 
 find_package(GadgetDLL 2.1.0 REQUIRED)
 
+add_library (RDMTestClass OBJECT "RDMTestClass.cpp" "RDMTestClass.h")
+target_link_libraries(RDMTestClass PUBLIC GadgetDLL::GadgetDLL)
+target_link_libraries(RDMTestClass PUBLIC EtcPal)
+target_link_libraries(RDMTestClass PUBLIC RDM)
 
-target_link_libraries(RDMTest PRIVATE GadgetDLL::GadgetDLL)
-target_link_libraries(RDMTest PRIVATE EtcPal)
-target_link_libraries(RDMTest PRIVATE RDM)
+# Add source to this project's executable.
+add_executable (RDMTest     "RDMTest.cpp" "RDMTest.h")
+target_link_libraries(RDMTest RDMTestClass)
 
 get_target_property(GADGET_DLL_LOCATION GadgetDLL::GadgetDLL IMPORTED_LOCATION_RELEASE)
 add_custom_command(
@@ -31,4 +28,5 @@ add_custom_command(
   COMMENT "Copying Gadget DLL to executable directory..."
 )
 # TODO: Add tests and install targets if needed.
+
 

@@ -248,6 +248,9 @@ GadgetDLL_DIR:PATH=C:/Users/janderson/source/repos/RDMTest/libGadget/x64/lib/cma
 //Value Computed by CMake
 RDMTest_BINARY_DIR:STATIC=C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug
 
+//Dependencies for the target
+RDMTest_LIB_DEPENDS:STATIC=general;GadgetDLL::GadgetDLL;general;EtcPal;general;RDM;
+
 //Value Computed by CMake
 RDMTest_SOURCE_DIR:STATIC=C:/Users/janderson/source/repos/RDMTest
 

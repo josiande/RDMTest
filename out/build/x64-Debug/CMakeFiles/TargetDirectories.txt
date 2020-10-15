@@ -26,6 +26,7 @@ C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDM/src/CMakeFiles/e
 C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDM/src/CMakeFiles/rebuild_cache.dir
 C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDM/src/CMakeFiles/list_install_components.dir
 C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDMTest/CMakeFiles/RDMTest.dir
+C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDMTest/CMakeFiles/RDMTestClass.dir
 C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDMTest/CMakeFiles/install/local.dir
 C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDMTest/CMakeFiles/install.dir
 C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDMTest/CMakeFiles/edit_cache.dir

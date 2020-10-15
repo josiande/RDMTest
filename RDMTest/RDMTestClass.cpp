@@ -23,8 +23,8 @@ int RDMTestClass::TestDeviceInfo(uint16_t ManfID, uint32_t DeviceID)
 		response = Gadget2_GetResponse(0);
 		timeout = etcpal_timer_is_expired(&timer);
 	} while (response == nullptr && !timeout);
-//	if (response != nullptr)
-//		std::cout << ResponseToStringHelper("DEVICE_INFO", E120_DEVICE_INFO, E120_GET_COMMAND, nullptr, response);
+	if (response != nullptr)
+		std::cout << ResponseToStringHelper("DEVICE_INFO", E120_DEVICE_INFO, E120_GET_COMMAND, nullptr, *response);
 	return 0;
 }
 
@@ -32,6 +32,5 @@ std::string RDMTestClass::ResponseToStringHelper(std::string ParamName, uint32_t
 {
 	std::string outputString = "";
 	outputString += ParamName;
-	std::cout << outputString;
 	return outputString;
 }

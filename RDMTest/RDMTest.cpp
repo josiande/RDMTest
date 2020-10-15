@@ -30,9 +30,9 @@ int main()
         Sleep(1000);
         if (Gadget2_GetDiscoveredDevices() >= 1)
         {
-           // RDMTestClass RDMTestObj;
+            RDMTestClass RDMTestObj;
             RdmDeviceInfo* DeviceInfo = Gadget2_GetDeviceInfo(0);
-           // RDMTestObj.TestAllPIDS(DeviceInfo->manufacturer_id, DeviceInfo->device_id);
+            RDMTestObj.TestAllPIDS(DeviceInfo->manufacturer_id, DeviceInfo->device_id);
         }
         
         

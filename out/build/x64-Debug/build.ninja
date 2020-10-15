@@ -577,17 +577,9 @@ build RDM\src\list_install_components: phony
 #############################################
 # Order-only phony target for RDMTest
 
-build cmake_object_order_depends_target_RDMTest_Debug: phony || cmake_object_order_depends_target_EtcPal_Debug cmake_object_order_depends_target_RDM_Debug
+build cmake_object_order_depends_target_RDMTest_Debug: phony || cmake_object_order_depends_target_RDMTestClass_Debug
 
 build RDMTest\CMakeFiles\RDMTest.dir\RDMTest.cpp.obj: CXX_COMPILER__RDMTest_Debug ..\..\..\RDMTest\RDMTest.cpp || cmake_object_order_depends_target_RDMTest_Debug
-  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
-  INCLUDES = -I..\..\..\EtcPal\include -I..\..\..\EtcPal\include\os\windows -I..\..\..\RDM\include -I..\..\..\libGadget\x64\include
-  OBJECT_DIR = RDMTest\CMakeFiles\RDMTest.dir
-  OBJECT_FILE_DIR = RDMTest\CMakeFiles\RDMTest.dir
-  TARGET_COMPILE_PDB = RDMTest\CMakeFiles\RDMTest.dir\
-  TARGET_PDB = RDMTest\RDMTest.pdb
-
-build RDMTest\CMakeFiles\RDMTest.dir\RDMTestClass.cpp.obj: CXX_COMPILER__RDMTest_Debug ..\..\..\RDMTest\RDMTestClass.cpp || cmake_object_order_depends_target_RDMTest_Debug
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   INCLUDES = -I..\..\..\EtcPal\include -I..\..\..\EtcPal\include\os\windows -I..\..\..\RDM\include -I..\..\..\libGadget\x64\include
   OBJECT_DIR = RDMTest\CMakeFiles\RDMTest.dir
@@ -603,10 +595,10 @@ build RDMTest\CMakeFiles\RDMTest.dir\RDMTestClass.cpp.obj: CXX_COMPILER__RDMTest
 #############################################
 # Link the executable RDMTest\RDMTest.exe
 
-build RDMTest\RDMTest.exe: CXX_EXECUTABLE_LINKER__RDMTest_Debug RDMTest\CMakeFiles\RDMTest.dir\RDMTest.cpp.obj RDMTest\CMakeFiles\RDMTest.dir\RDMTestClass.cpp.obj | ..\..\..\libGadget\x64\lib\GadgetDLL.lib EtcPal\src\EtcPal.lib RDM\src\RDM.lib EtcPal\src\EtcPal.lib || EtcPal\src\EtcPal.lib RDM\src\RDM.lib
+build RDMTest\RDMTest.exe: CXX_EXECUTABLE_LINKER__RDMTest_Debug RDMTest\CMakeFiles\RDMTestClass.dir\RDMTestClass.cpp.obj RDMTest\CMakeFiles\RDMTest.dir\RDMTest.cpp.obj | ..\..\..\libGadget\x64\lib\GadgetDLL.lib RDM\src\RDM.lib EtcPal\src\EtcPal.lib || RDMTest\RDMTestClass
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
-  LINK_LIBRARIES = ..\..\..\libGadget\x64\lib\GadgetDLL.lib  EtcPal\src\EtcPal.lib  RDM\src\RDM.lib  EtcPal\src\EtcPal.lib  winmm.lib  Rpcrt4.lib  ws2_32.lib  Iphlpapi.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
+  LINK_LIBRARIES = ..\..\..\libGadget\x64\lib\GadgetDLL.lib  RDM\src\RDM.lib  EtcPal\src\EtcPal.lib  winmm.lib  Rpcrt4.lib  ws2_32.lib  Iphlpapi.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
   OBJECT_DIR = RDMTest\CMakeFiles\RDMTest.dir
   POST_BUILD = cmd.exe /C "cd /D C:\Users\janderson\source\repos\RDMTest\out\build\x64-Debug\RDMTest && "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E copy C:/Users/janderson/source/repos/RDMTest/libGadget/x64/bin/GadgetDLL.dll C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDMTest"
   PRE_LINK = cd .
@@ -614,6 +606,30 @@ build RDMTest\RDMTest.exe: CXX_EXECUTABLE_LINKER__RDMTest_Debug RDMTest\CMakeFil
   TARGET_FILE = RDMTest\RDMTest.exe
   TARGET_IMPLIB = RDMTest\RDMTest.lib
   TARGET_PDB = RDMTest\RDMTest.pdb
+
+# =============================================================================
+# Object build statements for OBJECT_LIBRARY target RDMTestClass
+
+
+#############################################
+# Order-only phony target for RDMTestClass
+
+build cmake_object_order_depends_target_RDMTestClass_Debug: phony || cmake_object_order_depends_target_EtcPal_Debug cmake_object_order_depends_target_RDM_Debug
+
+build RDMTest\CMakeFiles\RDMTestClass.dir\RDMTestClass.cpp.obj: CXX_COMPILER__RDMTestClass_Debug ..\..\..\RDMTest\RDMTestClass.cpp || cmake_object_order_depends_target_RDMTestClass_Debug
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MDd /Zi /Ob0 /Od /RTC1
+  INCLUDES = -I..\..\..\EtcPal\include -I..\..\..\EtcPal\include\os\windows -I..\..\..\RDM\include -I..\..\..\libGadget\x64\include
+  OBJECT_DIR = RDMTest\CMakeFiles\RDMTestClass.dir
+  OBJECT_FILE_DIR = RDMTest\CMakeFiles\RDMTestClass.dir
+  TARGET_COMPILE_PDB = RDMTest\CMakeFiles\RDMTestClass.dir\
+  TARGET_PDB = ""
+
+
+
+#############################################
+# Object library RDMTestClass
+
+build RDMTest\RDMTestClass: phony RDMTest\CMakeFiles\RDMTestClass.dir\RDMTestClass.cpp.obj
 
 
 #############################################
@@ -683,6 +699,8 @@ build RDMTest: phony RDMTest\RDMTest.exe
 
 build RDMTest.exe: phony RDMTest\RDMTest.exe
 
+build RDMTestClass: phony RDMTest\RDMTestClass
+
 # =============================================================================
 # Folder targets.
 
@@ -726,7 +744,7 @@ build RDM\src\all: phony RDM\src\RDM.lib
 #############################################
 # Folder: C:/Users/janderson/source/repos/RDMTest/out/build/x64-Debug/RDMTest
 
-build RDMTest\all: phony RDMTest\RDMTest.exe
+build RDMTest\all: phony RDMTest\RDMTest.exe RDMTest\RDMTestClass
 
 # =============================================================================
 # Built-in targets
