@@ -1,5 +1,0 @@
-# CMake generation dependency list for this directory.
-C:/Users/janderson/source/repos/RDMTest/EtcPal/CMakeLists.txt
-C:/Users/janderson/source/repos/RDMTest/EtcPal/cmake/etcpal-os.cmake
-C:/Users/janderson/source/repos/RDMTest/EtcPal/cmake/net/windows.cmake
-C:/Users/janderson/source/repos/RDMTest/EtcPal/cmake/os/windows.cmake
