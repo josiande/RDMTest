@@ -6,6 +6,8 @@
 #include <unistd.h>
 #endif
 #include <iostream>
+#include <iomanip>
+#include <sstream>
 #include "GadgetDLL.h"
 #include "etcpal/timer.h"
 #include "RDMTestClass.h"
@@ -13,27 +15,49 @@
 int main()
 {
     
-    int success = 0, timeout = 0;
+    int success = 0, timeout = 0, numGadgets = 0, numDiscoveredDevices = 0;
    EtcPalTimer timer;
     std::cout << "RDMTest\n";
     Gadget2_Connect();
     etcpal_timer_start(&timer, 1000);
     do {
-        success = Gadget2_GetNumGadgetDevices();
+        numGadgets = Gadget2_GetNumGadgetDevices();
         timeout = etcpal_timer_is_expired(&timer);
-    } while (!success && !timeout);
+    } while (!numGadgets && !timeout);
     if (timeout)
-        std::cout << "could not find any connected Gadget II devices";
+        std::cout << "could not find any connected Gadget devices";
     else
     {
+        std::cout << "Connected Gadget Devices:\n";
+        for (int i = 0; i < numGadgets; i++)
+            std::cout << Gadget2_GetGadgetSerialNumber(i);
+        std::cout << "\n";
         Gadget2_DoFullDiscovery(0, 1);
-        Sleep(1000);
-        if (Gadget2_GetDiscoveredDevices() >= 1)
+        etcpal_timer_reset(&timer);
+        timeout = 0;
+        do {
+            numDiscoveredDevices = Gadget2_GetDiscoveredDevices();
+            timeout = etcpal_timer_is_expired(&timer);
+        } while (!numDiscoveredDevices && !timeout);
+        if (numDiscoveredDevices >= 1)
         {
-            RDMTestClass RDMTestObj;
-            RdmDeviceInfo* DeviceInfo = Gadget2_GetDeviceInfo(0);
-            RDMTestObj.TestAllPIDS(DeviceInfo->manufacturer_id, DeviceInfo->device_id);
+            std::cout << "Discovered RDM Devices:\n";
+            RDMTestClass RDMTestObj("C:/Users/janderson/Desktop/RDMTestFiles/testResults.csv");
+            for (int i = 0; i < numDiscoveredDevices; i++)
+            {
+                RdmDeviceInfo* DeviceInfo = Gadget2_GetDeviceInfo(0);
+                std::cout << std::setfill('0') << std::setw(4);
+                std::cout << std::hex << DeviceInfo->manufacturer_id;
+                std::cout << std::setfill('0') << std::setw(8);
+                std::cout << DeviceInfo->device_id;
+                std::cout << "\n";
+                RDMTestObj.TestAllPIDS(DeviceInfo->manufacturer_id, DeviceInfo->device_id);
+                RDMTestObj.PrintTestLog();
+            }
+
         }
+        else if (timeout)
+            std::cout << "could not discover any devices";
         
         
     }
