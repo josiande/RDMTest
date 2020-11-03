@@ -8,9 +8,11 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <fstream>
 #include "GadgetDLL.h"
 #include "etcpal/timer.h"
 #include "RDMTestClass.h"
+#include "RDMDevice.h"
 
 int main()
 {
@@ -42,23 +44,24 @@ int main()
         if (numDiscoveredDevices >= 1)
         {
             std::cout << "Discovered RDM Devices:\n";
-            RDMTestClass RDMTestObj("C:/Users/janderson/Desktop/RDMTestFiles/testResults.csv");
+            RDMTestClass RDMTestObj("testResults.csv");
             for (int i = 0; i < numDiscoveredDevices; i++)
             {
-                RdmDeviceInfo* DeviceInfo = Gadget2_GetDeviceInfo(0);
+
+                RdmDeviceInfo* DeviceInfo = Gadget2_GetDeviceInfo(i);
                 std::cout << std::setfill('0') << std::setw(4);
                 std::cout << std::hex << DeviceInfo->manufacturer_id;
                 std::cout << std::setfill('0') << std::setw(8);
                 std::cout << DeviceInfo->device_id;
                 std::cout << "\n";
-                RDMTestObj.TestAllPIDS(DeviceInfo->manufacturer_id, DeviceInfo->device_id);
+                RDMDevice device(i, DeviceInfo->device_model_id, DeviceInfo->manufacturer_id, DeviceInfo->device_id);
+                RDMTestObj.TestAllPIDS(device);
                 RDMTestObj.PrintTestLog();
             }
 
         }
         else if (timeout)
             std::cout << "could not discover any devices";
-        
         
     }
         

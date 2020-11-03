@@ -4,27 +4,44 @@
 #include <sstream>
 
 #include "RDMTestClass.h"
+#include "RDMDevice.h"
 #include "etcpal/timer.h"
 
-RDMTestClass::RDMTestClass(std::string outputFileName = "RDMTestResults.csv") 
+RDMTestClass::RDMTestClass(std::string outputFileName = "RDMTestResults.csv")
 {
 	RDMTestClass::outputFileName = outputFileName;
 	RDMTestClass::testLog = "";
 }
 
-int RDMTestClass::TestAllPIDS(uint16_t ManfID, uint32_t DeviceID)
+int RDMTestClass::TestAllPIDS(RDMDevice device)
 {
+	uint8_t sentData[0xE6];
+	uint16_t manfId = device.GetManfId();
+	uint32_t deviceId = device.GetDeviceId();
 	testLog += "Parameter Name,PID,Get/Set,Data,Result,ManfID,DeviceID,Transaction #,Response Type,Message Count,Command Class,PID,Length,Data,\n";
-	TestDeviceInfo(ManfID, DeviceID);
+	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 0, 0, nullptr, device);
+	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 1, 0, nullptr, device);
+	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_SET_COMMAND, 0, 0, nullptr, device);
+	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_SET_COMMAND, 1, 0, nullptr, device);
+	sentData[0] = 0;
+	sentData[1] = 13;
+	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 0, 0, nullptr, device);
+	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 0, 1, sentData, device);
+	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DEVICE_INFO, E120_SET_COMMAND, 0, 2, sentData, device);
+	std::cout << testLog;
 	return 0;
 }
 
-int RDMTestClass::TestDeviceInfo(uint16_t ManfID, uint32_t DeviceID)
+int RDMTestClass::TestDeviceInfo(RDMDevice device)
 {
 	uint8_t expectedData[0x13];
-	uint8_t sentData[1];
+	uint8_t sentData[100];
+	uint16_t manfId = device.GetManfId();
+	uint32_t deviceId = device.GetDeviceId();
+//	RDMDevice device(0, 0x0281);
+//	RDM_CmdC sendCmd(E120_GET_COMMAND, E120_DEVICE_INFO, 0, 0, nullptr, ManfID, DeviceID);
 	// Test ACK //
-	if (RDMTestClass::deviceInfo.e120_device_info_valid)
+	/*if (RDMTestClass::deviceInfo.e120_device_info_valid)
 	{
 		expectedData[0] = deviceInfo.rdm_protocol_version >> 8 & 0xFF;
 		expectedData[1] = deviceInfo.rdm_protocol_version & 0xFF;
@@ -63,6 +80,16 @@ int RDMTestClass::TestDeviceInfo(uint16_t ManfID, uint32_t DeviceID)
 	PIDTest("DEVICE_INFO", ManfID, DeviceID, E120_DEVICE_INFO, E120_SET_COMMAND, 0, nullptr, ExpResponse);
 	PIDTest("DEVICE_INFO", ManfID, DeviceID, E120_DEVICE_INFO, E120_SET_COMMAND, 1, sentData, ExpResponse);
 	ExpResponse.~RDM_CmdC();
+	std::cout << testLog;*/
+	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 0, 0, nullptr, device);
+	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 1, 0, nullptr, device);
+	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_SET_COMMAND, 0, 0, nullptr, device);
+	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_SET_COMMAND, 1, 0, nullptr, device);
+	sentData[0] = 0;
+	sentData[1] = 13;
+	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 0, 0, nullptr, device);
+	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 0, 1, sentData, device);
+	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DEVICE_INFO, E120_SET_COMMAND, 0, 2, sentData, device);
 	std::cout << testLog;
 	return 0;
 }
@@ -96,7 +123,7 @@ std::string RDMTestClass::ResponseToStringHelper(std::string ParamName, uint32_t
 	outputString += "0x" + IntToHexString(Response.getCommand(), 1) + ",";
 	outputString += "0x" + IntToHexString(Response.getParameter(), 2) + ",";
 	outputString += "0x" + IntToHexString(Response.getLength(), 1) + ",";
-	outputString += "0x" + BufferToHexString((uint8_t *)Response.getBuffer(), Response.getLength()) + ",";
+	outputString += "0x" + BufferToHexString((uint8_t*)Response.getBuffer(), Response.getLength()) + ",";
 
 	outputString += "\n";
 	return outputString;
@@ -113,16 +140,17 @@ std::string RDMTestClass::BufferToHexString(uint8_t* buffer, uint8_t length)
 std::string RDMTestClass::IntToHexString(uint64_t x, uint8_t numBytes)
 {
 	std::stringstream stream;
-	stream	<< std::setfill('0') << std::setw((uint64_t)numBytes * 2)
-			<< std::hex << x;
+	stream << std::setfill('0') << std::setw((uint64_t)numBytes * 2)
+		<< std::hex << x;
 	return stream.str();
 }
 
-int RDMTestClass::PIDTest(std::string ParamName, uint16_t ManfID, uint32_t DeviceID, uint32_t PID, uint8_t Cmd, uint8_t DataLength, uint8_t* Data, RDM_CmdC ExpResponse)
+int RDMTestClass::PIDTest(std::string ParamName, uint16_t ManfID, uint32_t DeviceID, uint32_t PID, uint8_t Cmd, uint16_t subdevice, uint8_t DataLength, uint8_t* Data, RDMDevice device)
 {
 	int responseTime = 0, timeout = 0, success = 0;
 	EtcPalTimer timer;
 	RDM_CmdC* response = nullptr;
+	RDM_CmdC expectedResponse = device.GetExpectedResponse(RDM_CmdC(Cmd, PID, subdevice, DataLength, Data, ManfID, DeviceID));
 
 	Gadget2_SendRDMCommand(0, 1, Cmd, PID, 0, DataLength, (char*)Data, ManfID, DeviceID);
 	etcpal_timer_start(&timer, 1000);
@@ -137,7 +165,7 @@ int RDMTestClass::PIDTest(std::string ParamName, uint16_t ManfID, uint32_t Devic
 	}
 	else
 	{
-		success = CompareResponseHelper(ExpResponse, *response);
+		success = CompareResponseHelper(expectedResponse, *response);
 		RDMTestClass::testLog += ResponseToStringHelper(ParamName, PID, Cmd, Data, DataLength, *response, success);
 	}
 	Gadget2_ClearResponse(0);
@@ -167,7 +195,7 @@ int RDMTestClass::CompareResponseHelper(RDM_CmdC ExpResponse, RDM_CmdC ActRespon
 		return -1;
 	else if (ExpResponse.getCommand() != ActResponse.getCommand())
 		return -1;
-	
+
 	uint8_t* ExpData = (uint8_t*)ExpResponse.getBuffer();
 	uint8_t* ActData = (uint8_t*)ActResponse.getBuffer();
 	for (int i = 0; i < ActResponse.getLength(); i++)
