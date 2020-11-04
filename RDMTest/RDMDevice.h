@@ -5,8 +5,13 @@
 
 class RDMDevice 
 {
-	int deviceIndex;
-	int deviceModelId;
+	uint8_t deviceIndex;
+	uint16_t deviceModelId;
+	unsigned char deviceModelDescription[32];
+
+	uint8_t numSupportedParams;
+	uint16_t supportedParams[0xE6];
+	
 	RdmDeviceInfo deviceInfo;
 
 public:
@@ -18,4 +23,6 @@ public:
 	RDM_CmdC GetExpectedResponse(RDM_CmdC cmdToSend);
 private:
 	void SetDeviceInfo(uint16_t manfId, uint32_t deviceId);
+	bool IsSupportedParam(uint16_t PID);
+	
 };

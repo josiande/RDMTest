@@ -18,6 +18,7 @@ public:
 	int TestAllPIDS(RDMDevice device);
 	int TestDeviceInfo(RDMDevice device);
 	int PIDTest(std::string ParamName, uint16_t ManfID, uint32_t DeviceID, uint32_t PID, uint8_t Cmd, uint16_t subdevice, uint8_t DataLength, uint8_t* Data, RDMDevice device);
+	int CheckForQueuedMessages(RDMDevice device);
 	void PrintTestLog();
 	void SetDeviceToTest(RdmDeviceInfo newDeviceInfo);
 	RdmDeviceInfo GetDeviceToTest();

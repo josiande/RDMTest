@@ -11,7 +11,7 @@ endif()
 
 find_package(GadgetDLL 2.1.0 REQUIRED)
 
-add_library (RDMTestClass OBJECT "RDMTestClass.cpp" "RDMTestClass.h" "RDMDevice.h" "RDMDevice.cpp")
+add_library (RDMTestClass OBJECT "RDMTestClass.cpp" "RDMTestClass.h" "RDMDevice.h" "RDMDevice.cpp" "RDMSupportedParameters.h" )
 target_link_libraries(RDMTestClass PUBLIC GadgetDLL::GadgetDLL)
 target_link_libraries(RDMTestClass PUBLIC EtcPal)
 target_link_libraries(RDMTestClass PUBLIC RDM)
