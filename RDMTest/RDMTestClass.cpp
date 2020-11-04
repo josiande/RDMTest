@@ -23,20 +23,21 @@ int RDMTestClass::TestAllPIDS(RDMDevice device)
 	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 1, 0, nullptr, device);
 	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_SET_COMMAND, 0, 0, nullptr, device);
 	PIDTest("DEVICE_INFO", manfId, deviceId, E120_DEVICE_INFO, E120_SET_COMMAND, 1, 0, nullptr, device);
-	sentData[0] = 0;
-	sentData[1] = 13;
-	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DMX_START_ADDRESS, E120_GET_COMMAND, 0, 0, nullptr, device);
-	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DMX_START_ADDRESS, E120_GET_COMMAND, 0, 1, sentData, device);
-	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DMX_START_ADDRESS, E120_SET_COMMAND, 0, 2, sentData, device);
-	sentData[0] = E120_STATUS_GET_LAST_MESSAGE;
-	PIDTest("QUEUED_MESSAGE", manfId, deviceId, E120_QUEUED_MESSAGE, E120_GET_COMMAND, 0, 1, sentData, device);
+
 	sentData[0] = 0;
 	sentData[1] = 1;
+	device.deviceInfo.dmx_start_address = 1;
+	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DMX_START_ADDRESS, E120_SET_COMMAND, 0, 2, sentData, device);
+	device.deviceInfo.dmx_start_address = 1;
+	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DMX_START_ADDRESS, E120_GET_COMMAND, 0, 0, nullptr, device);
+	sentData[0] = 0;
+	sentData[1] = 13;
+	device.deviceInfo.dmx_start_address = 13;
 	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DMX_START_ADDRESS, E120_SET_COMMAND, 0, 2, sentData, device);
 	PIDTest("DMX_START_ADDRESS", manfId, deviceId, E120_DMX_START_ADDRESS, E120_GET_COMMAND, 0, 0, nullptr, device);
 	PIDTest("SOFTWARE_VERSION_LABEL", manfId, deviceId, E120_SOFTWARE_VERSION_LABEL, E120_GET_COMMAND, 0, 0, nullptr, device);
 //	PIDTest("SUPPORTED_PARAMETERS", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 0, 0, nullptr, device);
-	PIDTest("DEVICE_MODEL_DESCRIPTION", manfId, deviceId, E120_DEVICE_INFO, E120_GET_COMMAND, 0, 0, nullptr, device);
+	PIDTest("DEVICE_MODEL_DESCRIPTION", manfId, deviceId, E120_DEVICE_MODEL_DESCRIPTION, E120_GET_COMMAND, 0, 0, nullptr, device);
 	std::cout << testLog;
 	return 0;
 }
@@ -144,6 +145,24 @@ std::string RDMTestClass::ResponseToStringHelper(std::string ParamName, uint32_t
 	return outputString;
 }
 
+std::string RDMTestClass::StatusMessageToStringHelper(RDM_CmdC Response)
+{
+	std::string outputString = "";
+	outputString += ",,,,,";
+	outputString += "0x" + IntToHexString(Response.getManufacturerId(), 2) + ",";
+	outputString += "0x" + IntToHexString(Response.getDeviceId(), 4) + ",";
+	outputString += "0x" + IntToHexString(Response.getTransactionNum(), 1) + ",";
+	outputString += "0x" + IntToHexString(Response.getResponseType(), 1) + ",";
+	outputString += "0x" + IntToHexString(Response.getMessageCount(), 1) + ",";
+	outputString += "0x" + IntToHexString(Response.getCommand(), 1) + ",";
+	outputString += "0x" + IntToHexString(Response.getParameter(), 2) + ",";
+	outputString += "0x" + IntToHexString(Response.getLength(), 1) + ",";
+	outputString += "0x" + BufferToHexString((uint8_t*)Response.getBuffer(), Response.getLength()) + ",";
+
+	outputString += "\n";
+	return outputString;
+}
+
 std::string RDMTestClass::BufferToHexString(uint8_t* buffer, uint8_t length)
 {
 	std::string tempString = "";
@@ -168,11 +187,11 @@ int RDMTestClass::PIDTest(std::string ParamName, uint16_t ManfID, uint32_t Devic
 	RDM_CmdC expectedResponse = device.GetExpectedResponse(RDM_CmdC(Cmd, PID, subdevice, DataLength, Data, ManfID, DeviceID));
 
 	Gadget2_SendRDMCommand(0, 1, Cmd, PID, 0, DataLength, (char*)Data, ManfID, DeviceID);
-	etcpal_timer_start(&timer, 1000);
+	etcpal_timer_start(&timer, 500);
 	do {
 		numResponses = Gadget2_GetNumResponses();
 		timeout = etcpal_timer_is_expired(&timer);
-	} while (!numResponses && !timeout);
+	} while (!timeout);
 	std::cout << "unofficial response time: " << std::dec << etcpal_timer_elapsed(&timer) << "ms\n";
 	if (!numResponses)
 	{
@@ -180,11 +199,39 @@ int RDMTestClass::PIDTest(std::string ParamName, uint16_t ManfID, uint32_t Devic
 	}
 	else
 	{
-		response = Gadget2_GetResponse(0);
-		success = CompareResponseHelper(expectedResponse, *response);
-		RDMTestClass::testLog += ResponseToStringHelper(ParamName, PID, Cmd, Data, DataLength, *response, success);
+		std::cout << numResponses << "responses.\n";
+		for (int i = 0; i < numResponses; i++)
+		{
+			response = Gadget2_GetResponse(0);
+			success = CompareResponseHelper(expectedResponse, *response);
+			if (i == 0)
+				RDMTestClass::testLog += ResponseToStringHelper(ParamName, PID, Cmd, Data, DataLength, *response, success);
+			else
+				RDMTestClass::testLog += StatusMessageToStringHelper(*response);
+			Gadget2_ClearResponse(0);
+		}
+		
+		//RDMTestClass::testLog += ResponseToStringHelper(ParamName, PID, Cmd, Data, DataLength, *response, success);
+		//Gadget2_ClearResponse(0);
+		/*for (int i = 0; i < response->getMessageCount(); i++)
+		{
+			
+			uint8_t status[1] = { E120_STATUS_GET_LAST_MESSAGE };
+			Gadget2_SendRDMCommand(0, 1, E120_GET_COMMAND, E120_QUEUED_MESSAGE, 0, 1, (char*)status, ManfID, DeviceID);
+			etcpal_timer_reset(&timer);
+			do {
+				numResponses = Gadget2_GetNumResponses();
+				timeout = etcpal_timer_is_expired(&timer);
+			} while (!timeout);
+			if (numResponses)
+			{
+				response = Gadget2_GetResponse(0);
+				RDMTestClass::testLog += ResponseToStringHelper("QUEUED_MESSAGE", E120_QUEUED_MESSAGE, E120_GET_COMMAND, status, 1, *response, 1);
+			}
+			Gadget2_ClearResponse(0);
+		}*/
 	}
-	Gadget2_ClearResponse(0);
+	
 
 	return success;
 }
@@ -201,8 +248,8 @@ int RDMTestClass::CompareResponseHelper(RDM_CmdC ExpResponse, RDM_CmdC ActRespon
 		return -1;
 	else if (ExpResponse.getParameter() != ActResponse.getParameter())
 		return -1;
-	else if (ExpResponse.getMessageCount() != ActResponse.getMessageCount())
-		return -1;
+//	else if (ExpResponse.getMessageCount() != ActResponse.getMessageCount())
+//		return -1;
 	else if (ExpResponse.getManufacturerId() != ActResponse.getManufacturerId())
 		return -1;
 	else if (ExpResponse.getDeviceId() != ActResponse.getDeviceId())

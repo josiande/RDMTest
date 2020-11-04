@@ -11,10 +11,10 @@ class RDMDevice
 
 	uint8_t numSupportedParams;
 	uint16_t supportedParams[0xE6];
-	
-	RdmDeviceInfo deviceInfo;
 
 public:
+	RdmDeviceInfo deviceInfo;
+
 	RDMDevice(int deviceIndex, uint16_t deviceModelId, uint16_t manfId, uint32_t deviceId);
 	int GetDeviceIndex();
 	void SetDeviceIndex(int deviceIndex);

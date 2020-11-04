@@ -24,6 +24,7 @@ public:
 	RdmDeviceInfo GetDeviceToTest();
 private:
 	std::string ResponseToStringHelper(std::string ParamName, uint32_t PID, uint8_t Cmd, uint8_t* Data, uint8_t DataSize, RDM_CmdC Response, int success);
+	std::string StatusMessageToStringHelper(RDM_CmdC Response);
 	std::string IntToHexString(uint64_t x, uint8_t numBytes);
 	std::string BufferToHexString(uint8_t* buffer, uint8_t length);
 	int CompareResponseHelper(RDM_CmdC ExpResponse, RDM_CmdC ActResponse);

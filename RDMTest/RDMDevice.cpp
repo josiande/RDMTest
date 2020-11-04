@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include "RDMDevice.h"
 #include "RDMSupportedParameters.h"
 
@@ -133,7 +134,8 @@ RDM_CmdC RDMDevice::GetExpectedResponse(RDM_CmdC cmdToSend)
 				if (cmdToSend.getLength() == 0)
 				{
 					uint8_t expectedData[33];
-					memcpy(expectedData, RDMDevice::deviceModelDescription, sizeof(RDMDevice::deviceModelDescription));
+					memcpy(expectedData, RDMDevice::deviceModelDescription, strlen((char*)RDMDevice::deviceModelDescription));
+					response.setLength(strlen((char*)RDMDevice::deviceModelDescription));
 					response.setBuffer(expectedData);
 					response.setResponseType(E120_RESPONSE_TYPE_ACK);
 				}
@@ -159,7 +161,8 @@ RDM_CmdC RDMDevice::GetExpectedResponse(RDM_CmdC cmdToSend)
 				if (cmdToSend.getLength() == 0)
 				{
 					uint8_t expectedData[33];
-					memcpy(expectedData, RDMDevice::deviceInfo.software_version_label, sizeof(RDMDevice::deviceInfo.software_version_label));
+					memcpy(expectedData, RDMDevice::deviceInfo.software_version_label, strlen((char*)RDMDevice::deviceInfo.software_version_label));
+					response.setLength(strlen((char*)RDMDevice::deviceInfo.software_version_label));
 					response.setBuffer(expectedData);
 					response.setResponseType(E120_RESPONSE_TYPE_ACK);
 				}
@@ -246,8 +249,8 @@ void RDMDevice::SetDeviceInfo(uint16_t manfId, uint32_t deviceId)
 			RDMDevice::deviceInfo.manufacturer_id = manfId;
 			RDMDevice::deviceInfo.device_id = deviceId;
 			RDMDevice::deviceModelId = RDMDevice::deviceModelId;
-			memcpy(RDMDevice::deviceModelDescription, "S4WRD Color", sizeof("S4WRD Color"));
-			memcpy(RDMDevice::deviceInfo.software_version_label, "1.0.0.20", sizeof("1.0.0.20"));
+			memcpy(RDMDevice::deviceModelDescription, "S4WRD Color", strlen("S4WRD Color") + 1);
+			memcpy(RDMDevice::deviceInfo.software_version_label, "1.0.0.16", strlen("1.0.0.16") + 1);
 
 			RDMDevice::deviceInfo.rdm_protocol_version = 0x0100;
 			RDMDevice::deviceInfo.device_model_id = RDMDevice::deviceModelId;
