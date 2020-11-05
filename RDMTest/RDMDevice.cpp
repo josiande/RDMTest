@@ -8,6 +8,7 @@ RDMDevice::RDMDevice(int deviceIndex, uint16_t deviceModelId, uint16_t manfId, u
 	SetDeviceIndex(deviceIndex);
 	RDMDevice::deviceModelId = deviceModelId;
 	SetDeviceInfo(manfId, deviceId);
+	SetIsFactoryDefaults(0);
 }
 
 int RDMDevice::GetDeviceIndex()
@@ -28,6 +29,28 @@ uint16_t RDMDevice::GetManfId()
 uint32_t RDMDevice::GetDeviceId()
 {
 	return RDMDevice::deviceInfo.device_id;
+}
+
+uint16_t RDMDevice::GetDMXAddress()
+{
+	return RDMDevice::deviceInfo.dmx_start_address;
+}
+void RDMDevice::SetDMXAddress(uint16_t dmxAddress)
+{
+	RDMDevice::deviceInfo.dmx_start_address = dmxAddress;
+}
+uint8_t RDMDevice::GetIsFactoryDefaults()
+{
+	return RDMDevice::isFactoryDefaults;
+}
+void RDMDevice::SetIsFactoryDefaults(uint8_t isFactoryDefaults)
+{
+	RDMDevice::isFactoryDefaults = isFactoryDefaults;
+}
+
+void RDMDevice::SetDeviceLabel(unsigned char* deviceLabel)
+{
+	memcpy(RDMDevice::deviceLabel, deviceLabel, strlen((char *)deviceLabel) + 1);
 }
 
 RDM_CmdC RDMDevice::GetExpectedResponse(RDM_CmdC cmdToSend)
@@ -73,6 +96,7 @@ RDM_CmdC RDMDevice::GetExpectedResponse(RDM_CmdC cmdToSend)
 					uint8_t expectedData[0xE6];
 					memcpy(expectedData, supportedParams, numSupportedParams);
 					response.setBuffer(expectedData);
+					response.setLength(numSupportedParams);
 					response.setResponseType(E120_RESPONSE_TYPE_ACK);
 				}
 				else
@@ -152,8 +176,90 @@ RDM_CmdC RDMDevice::GetExpectedResponse(RDM_CmdC cmdToSend)
 			}
 			break;
 		case E120_MANUFACTURER_LABEL:
+			if (cmdToSend.getCommand() == E120_GET_COMMAND)
+			{
+				if (cmdToSend.getLength() == 0)
+				{
+					uint8_t expectedData[33];
+					memcpy(expectedData, RDMDevice::manfLabel, strlen((char*)RDMDevice::manfLabel));
+					response.setLength(strlen((char*)RDMDevice::manfLabel));
+					response.setBuffer(expectedData);
+					response.setResponseType(E120_RESPONSE_TYPE_ACK);
+				}
+				else
+				{
+					uint8_t expectedData[] = { 0, E120_NR_FORMAT_ERROR };
+					response.setBuffer(expectedData);
+				}
+			}
+			else
+			{
+				uint8_t expectedData[] = { 0, E120_NR_UNSUPPORTED_COMMAND_CLASS };
+				response.setBuffer(expectedData);
+			}
+			break;
 		case E120_DEVICE_LABEL:
+			if (cmdToSend.getCommand() == E120_GET_COMMAND)
+			{
+				if (cmdToSend.getLength() == 0)
+				{
+					uint8_t expectedData[33];
+					memcpy(expectedData, RDMDevice::deviceLabel, strlen((char*)RDMDevice::deviceLabel));
+					response.setLength(strlen((char*)RDMDevice::deviceLabel));
+					response.setBuffer(expectedData);
+					response.setResponseType(E120_RESPONSE_TYPE_ACK);
+				}
+				else
+				{
+					uint8_t expectedData[] = { 0, E120_NR_FORMAT_ERROR };
+					response.setBuffer(expectedData);
+				}
+			}
+			else
+			{
+				if (cmdToSend.getLength() <= 32)
+				{
+					response.setLength(0);
+					response.setBuffer(nullptr);
+					response.setResponseType(E120_RESPONSE_TYPE_ACK);
+				}
+				else
+				{
+					uint8_t expectedData[] = { 0, E120_NR_FORMAT_ERROR };
+					response.setBuffer(expectedData);
+				}
+			}
+			break;
 		case E120_FACTORY_DEFAULTS:
+			if (cmdToSend.getCommand() == E120_GET_COMMAND)
+			{
+				if (cmdToSend.getLength() == 0)
+				{
+					uint8_t exoectedData[1] = { RDMDevice::isFactoryDefaults };
+					response.setLength(1);
+					response.setBuffer(exoectedData);
+					response.setResponseType(E120_RESPONSE_TYPE_ACK);
+				}
+				else
+				{
+					uint8_t expectedData[] = { 0, E120_NR_FORMAT_ERROR };
+					response.setBuffer(expectedData);
+				}
+			}
+			else
+			{
+				if (cmdToSend.getLength() == 0)
+				{
+					response.setLength(0);
+					response.setBuffer(nullptr);
+					response.setResponseType(E120_RESPONSE_TYPE_ACK);
+				}
+				else
+				{
+					uint8_t expectedData[] = { 0, E120_NR_FORMAT_ERROR };
+					response.setBuffer(expectedData);
+				}
+			}
 			break;
 		case E120_SOFTWARE_VERSION_LABEL:
 			if (cmdToSend.getCommand() == E120_GET_COMMAND)
@@ -246,6 +352,9 @@ void RDMDevice::SetDeviceInfo(uint16_t manfId, uint32_t deviceId)
 {
 	switch (RDMDevice::deviceModelId) {
 		case 0x0802:
+			memcpy(RDMDevice::manfLabel, "ETC", strlen("ETC") + 1);
+			memcpy(RDMDevice::deviceLabel, "S4WRD Color", strlen("S4WRD Color") + 1);
+
 			RDMDevice::deviceInfo.manufacturer_id = manfId;
 			RDMDevice::deviceInfo.device_id = deviceId;
 			RDMDevice::deviceModelId = RDMDevice::deviceModelId;
@@ -301,9 +410,13 @@ void RDMDevice::SetDeviceInfo(uint16_t manfId, uint32_t deviceId)
 
 bool RDMDevice::IsSupportedParam(uint16_t PID)
 {
-	uint16_t* i = std::find(RDMDevice::supportedParams, RDMDevice::supportedParams + RDMDevice::numSupportedParams, PID);
-	if (i != RDMDevice::supportedParams + RDMDevice::numSupportedParams)
-		return true;
+	bool isSupportedParam = false;
+	const uint16_t* x = std::find(UNIVERSAL_PARAMS, UNIVERSAL_PARAMS + 12, PID);
+	uint16_t* y = std::find(RDMDevice::supportedParams, RDMDevice::supportedParams + RDMDevice::numSupportedParams, PID);
+	if (x != UNIVERSAL_PARAMS + 12 || y != RDMDevice::supportedParams + RDMDevice::numSupportedParams)
+		isSupportedParam = true;
 	else
-		return false;
+		isSupportedParam = false;
+
+	return isSupportedParam;
 }
