@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\janderson\projects\RDMTest\RDMTest\RDMTest.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\janderson\projects\RDMTest\RDMTest\RDMTest.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\janderson\projects\RDMTest\RDMTest\RDMTestClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\janderson\projects\RDMTest\RDMTest\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="C:\Users\janderson\projects\RDMTest\RDMTest\RDMTestClasses\RDMTestClass.dir\$(Configuration)\RDMTestClass.obj">
+      <Filter>Object Libraries</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{DBD3486A-2F9B-3EFC-8187-6644780AEA07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object Libraries">
+      <UniqueIdentifier>{59880654-BE1F-3A3E-B27D-D6E615C31ED0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{031DEB0C-A290-3A77-917F-28369FF69F93}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

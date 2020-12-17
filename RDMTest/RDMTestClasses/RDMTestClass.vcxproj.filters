@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\janderson\projects\RDMTest\RDMTest\RDMTestClasses\RDMTestClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\janderson\projects\RDMTest\RDMTest\RDMTestClasses\RDMTestClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\janderson\projects\RDMTest\RDMTest\RDMTestClasses\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{DBD3486A-2F9B-3EFC-8187-6644780AEA07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{031DEB0C-A290-3A77-917F-28369FF69F93}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
