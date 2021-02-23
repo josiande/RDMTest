@@ -1,0 +1,2 @@
+C:\Users\janderson\projects\RDMTest\RDMTest\RDMTestClasses\RDMTestClass.dir\Debug\RDMTestClass.lib
+C:\Users\janderson\projects\RDMTest\RDMTest\RDMTestClasses\RDMTestClass.dir\Debug\RDMTestClass.pdb
