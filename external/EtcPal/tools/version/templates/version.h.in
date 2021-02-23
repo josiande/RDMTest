@@ -1,0 +1,54 @@
+/******************************************************************************
+ * Copyright 2020 ETC Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *******************************************************************************
+ * This file is a part of EtcPal. For more information, go to:
+ * https://github.com/ETCLabs/EtcPal
+ ******************************************************************************/
+
+/**
+ * @file etcpal/version.h
+ * @brief Provides the current version of the EtcPal library.
+ */
+
+#ifndef ETCPAL_VERSION_H_
+#define ETCPAL_VERSION_H_
+
+/* clang-format off */
+
+/**
+ * @name EtcPal version numbers
+ * @{
+ */
+#define ETCPAL_VERSION_MAJOR @ETCPAL_VERSION_MAJOR@
+#define ETCPAL_VERSION_MINOR @ETCPAL_VERSION_MINOR@
+#define ETCPAL_VERSION_PATCH @ETCPAL_VERSION_PATCH@
+#define ETCPAL_VERSION_BUILD @ETCPAL_VERSION_BUILD@
+/**
+ * @}
+ */
+
+/**
+ * @name EtcPal version strings
+ * @{
+ */
+#define ETCPAL_VERSION_STRING "@ETCPAL_VERSION_STRING@"
+#define ETCPAL_VERSION_DATESTR "@ETCPAL_VERSION_DATESTR@"
+#define ETCPAL_VERSION_COPYRIGHT "@ETCPAL_VERSION_COPYRIGHT@"
+#define ETCPAL_VERSION_PRODUCTNAME "EtcPal"
+/**
+ * @}
+ */
+
+#endif /* ETCPAL_VERSION_H_ */
