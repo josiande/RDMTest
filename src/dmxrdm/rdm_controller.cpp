@@ -1,5 +1,5 @@
 #include "dmxrdm/rdm_controller.h"
-#include "ui/shell.h"
+#include "ui/console.h"
 
 RDMController::RDMController()
 {
@@ -21,7 +21,9 @@ void RDMController::Discover()
     {
       Gadget2_DoFullDiscovery(cur_gadget, cur_port);
       etcpal_timer_start(&timer, 1000);
-      while (!etcpal_timer_is_expired(&timer)) {}
+      while (!etcpal_timer_is_expired(&timer))
+      {
+      }
       num_discovered_devices = Gadget2_GetDiscoveredDevices();
       for (int cur_device = 0; cur_device < num_discovered_devices; cur_device++)
       {
@@ -29,21 +31,22 @@ void RDMController::Discover()
         RDMDevice new_device(*new_device_info, cur_gadget, serial_num);
         connected_devices_[num_connected_devices_] = new_device;
         num_connected_devices_++;
-        LogShell(ETCPAL_LOG_DEBUG, "\r\nconnected device: %04X%08X\r\nport number: %d\r\n",
-                 new_device.device_info_.manufacturer_id, new_device.device_info_.device_id,
-                 new_device.device_info_.port_number);
+        LogConsole(ETCPAL_LOG_DEBUG, "\r\nconnected device: %04X%08X\r\nport number: %d\r\n",
+                   new_device.device_info_.manufacturer_id, new_device.device_info_.device_id,
+                   new_device.device_info_.port_number);
       }
     }
   }
 }
 
-void RDMController::SendRDM(unsigned int device_index, unsigned char cmd, unsigned short pid, unsigned short data_len, const char * buffer)
+void RDMController::SendRDM(unsigned int device_index, RDM_CmdC cmd)
 {
-  RDM_CmdC *cmd = Gadget2_GetResponse(0);
-  
+  // RDM_CmdC *cmd = Gadget2_GetResponse(0);
+
   Gadget2_SendRDMCommand(connected_devices_[device_index].gadget_index_,
-                         connected_devices_[device_index].device_info_.port_number, cmd, pid, 0, data_len,
-                         buffer, connected_devices_[device_index].device_info_.manufacturer_id,
+                         connected_devices_[device_index].device_info_.port_number, cmd.getCommand(),
+                         cmd.getParameter(), cmd.getSubdevice(), cmd.getLength(), (const char*)cmd.getBuffer(),
+                         connected_devices_[device_index].device_info_.manufacturer_id,
                          connected_devices_[device_index].device_info_.device_id);
 }
 
@@ -71,4 +74,16 @@ int RDMController::SearchForGadgetsBlocking()
     timeout = etcpal_timer_is_expired(&timer);
   } while (!timeout && !found_gadgets);
   return found_gadgets;
+}
+
+RDMController my_rdm_controller;
+
+void InitRDMControllerInstance()
+{
+  ;
+}
+
+RDMController* GetRDMControllerInstance()
+{
+  return &my_rdm_controller;
 }

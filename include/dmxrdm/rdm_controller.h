@@ -23,8 +23,7 @@ class RDMController
 public:
   RDMController();
   void Discover();
-  void SendRDM(unsigned int device_index, unsigned char cmd, unsigned short pid, unsigned short data_len,
-               const char* buffer);
+  void SendRDM(unsigned int device_index, RDM_CmdC cmd);
 
   int GetNumConnectedDevices();
   RDMDevice* GetConnectedDevice(int device_index);
@@ -37,5 +36,8 @@ private:
   int SearchForGadgetsNonBlocking();
 
 };
+
+
+RDMController* GetRDMControllerInstance();
 
 #endif

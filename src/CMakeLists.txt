@@ -5,11 +5,11 @@ set(RDMTEST_CORE_SOURCES
   # RDMTest headers
   ${RDMTEST_ROOT}/include/dmxrdm/rdm_controller.h
   ${RDMTEST_ROOT}/include/dmxrdm/rdm_device.h
-  ${RDMTEST_ROOT}/include/ui/shell.h
+  ${RDMTEST_ROOT}/include/ui/console.h
   # RDMTest sources
   ${RDMTEST_ROOT}/src/dmxrdm/rdm_controller.cpp
   ${RDMTEST_ROOT}/src/dmxrdm/rdm_device.cpp
-  ${RDMTEST_ROOT}/src/ui/shell.cpp
+  ${RDMTEST_ROOT}/src/ui/console.cpp
 )
 
 add_library(${RDMTEST_LIB_TARGET_NAME} ${RDMTEST_CORE_SOURCES})
