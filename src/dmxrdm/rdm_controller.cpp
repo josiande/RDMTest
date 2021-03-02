@@ -37,6 +37,16 @@ void RDMController::Discover()
   }
 }
 
+void RDMController::SendRDM(unsigned int device_index, unsigned char cmd, unsigned short pid, unsigned short data_len, const char * buffer)
+{
+  RDM_CmdC *cmd = Gadget2_GetResponse(0);
+  
+  Gadget2_SendRDMCommand(connected_devices_[device_index].gadget_index_,
+                         connected_devices_[device_index].device_info_.port_number, cmd, pid, 0, data_len,
+                         buffer, connected_devices_[device_index].device_info_.manufacturer_id,
+                         connected_devices_[device_index].device_info_.device_id);
+}
+
 int RDMController::GetNumConnectedDevices()
 {
   return num_connected_devices_;
